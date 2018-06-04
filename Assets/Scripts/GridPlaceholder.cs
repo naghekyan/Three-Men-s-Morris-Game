@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-class GridPlaceholder
+public class GridPlaceholder
 {
     private int m_column;
     private int m_row;

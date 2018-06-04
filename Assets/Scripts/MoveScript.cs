@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using AssemblyCSharp;
 
 public class MoveScript : MonoBehaviour 
 {
@@ -12,7 +12,7 @@ public class MoveScript : MonoBehaviour
     private GameObject m_grabbedBall;
     private BallColor m_colorToMove;
     private float m_positionLerpAlpha = 0.25f;
-    private GridPositionProvider m_validPositionProvider;
+    private GridPositionProvider m_gridPositionProvider;
     private Vector3 velocity = Vector3.zero;
     private float smoothTime = 0.1F;
 
@@ -25,7 +25,7 @@ public class MoveScript : MonoBehaviour
     private void initializeValidPositions()
     {
         GameObject[] listOfHoles = GameObject.FindGameObjectsWithTag("Hole");
-        m_validPositionProvider = new GridPositionProvider (listOfHoles);
+        m_gridPositionProvider = new GridPositionProvider (listOfHoles);
     }
 	
 	void Update () 
@@ -45,15 +45,17 @@ public class MoveScript : MonoBehaviour
        while (true) {
             Vector3 grabbedBallPosition = m_grabbedBall.transform.position;
 
-            if (m_validPositionProvider.IsValidPositionInRangeExists (grabbedBallPosition, m_snapRange)) {
-                Vector3 targetPosition = m_validPositionProvider.GetValidPositionInRange (grabbedBallPosition, m_snapRange);
+            if (m_gridPositionProvider.IsValidPositionInRangeExists (grabbedBallPosition, m_snapRange)) {
+                GridPlaceholder gridPlacholder = m_gridPositionProvider.GetGridPlacholderInRange (grabbedBallPosition, m_snapRange);
+                Vector3 targetPosition = gridPlacholder.GetWorldPosition();
                 targetPosition.z = targetPosition.z - 0.2f;
                 m_grabbedBall.transform.position = Vector3.SmoothDamp (grabbedBallPosition, targetPosition, ref velocity, smoothTime);
 
                 if (Vector3.Distance (grabbedBallPosition, targetPosition) > 0.01f) {
                     yield return null;
                 } else {
-                   break;
+                    MakeMove(gridPlacholder);
+                    break;
                 }
             } else {
                 break;
@@ -61,6 +63,11 @@ public class MoveScript : MonoBehaviour
         }
 
         ungrabBall ();
+    }
+
+    private void MakeMove(GridPlaceholder gridPlacholder)
+    {
+        Debug.Log("Indexes = " + gridPlacholder.GetRow().ToString() + " : " + gridPlacholder.GetColumn().ToString());
     }
 
     private void tryToGrabBall()
@@ -102,8 +109,9 @@ public class MoveScript : MonoBehaviour
     private void snapToValidPositions() {
         Vector3 grabbedBallPosition = m_grabbedBall.transform.position;
 
-        if (m_validPositionProvider.IsValidPositionInRangeExists (grabbedBallPosition, m_snapRange)) {
-            Vector3 targetPosition = m_validPositionProvider.GetValidPositionInRange (grabbedBallPosition, m_snapRange);
+        if (m_gridPositionProvider.IsValidPositionInRangeExists (grabbedBallPosition, m_snapRange)) {
+            GridPlaceholder gridPlacholder = m_gridPositionProvider.GetGridPlacholderInRange (grabbedBallPosition, m_snapRange);
+            Vector3 targetPosition = gridPlacholder.GetWorldPosition();
             float strongLerpFactor = 1.5f * m_positionLerpAlpha;
             m_grabbedBall.transform.position = Vector3.Lerp (grabbedBallPosition, targetPosition, strongLerpFactor);
         }
