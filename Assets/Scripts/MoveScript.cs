@@ -12,7 +12,7 @@ public class MoveScript : MonoBehaviour
     private GameObject m_grabbedBall;
     private BallColor m_colorToMove;
     private float m_positionLerpAlpha = 0.25f;
-    private ValidPositionProvider m_validPositionProvider;
+    private GridPositionProvider m_validPositionProvider;
     private Vector3 velocity = Vector3.zero;
     private float smoothTime = 0.1F;
 
@@ -25,7 +25,7 @@ public class MoveScript : MonoBehaviour
     private void initializeValidPositions()
     {
         GameObject[] listOfHoles = GameObject.FindGameObjectsWithTag("Hole");
-        m_validPositionProvider = new ValidPositionProvider (listOfHoles);
+        m_validPositionProvider = new GridPositionProvider (listOfHoles);
     }
 	
 	void Update () 

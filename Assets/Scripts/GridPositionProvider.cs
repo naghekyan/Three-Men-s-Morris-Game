@@ -5,27 +5,27 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-    public class ValidPositionProvider
+    public class GridPositionProvider
     {
         class RangeQueryCache
         {
             private Vector3 m_rangeCenter;
             private float m_rangeRadius;
-            private Vector3 m_validPosition;
+            private GridPlaceholder m_validPlacholder;
             private float m_epislon = float.Epsilon;
 
             public  RangeQueryCache() {
                 
             }
 
-            public void SetValidPositionForRange(Vector3 rangeCenter, float rangeRadius, Vector3 validPosition) {
+            public void SetValidPlacholderForRange(Vector3 rangeCenter, float rangeRadius, GridPlaceholder validPlacholder) {
                 m_rangeCenter = rangeCenter;
                 m_rangeRadius = rangeRadius;
-                m_validPosition = validPosition;
+                m_validPlacholder = validPlacholder;
             }
 
-            public Vector3 GetCachedValidPosition() {
-                return m_validPosition;
+            public GridPlaceholder GetCachedValidPlacholder() {
+                return m_validPlacholder;
             }
 
             public bool isEqualToChachedRange(Vector3 rangeCenter, float rangeRadius) {
@@ -36,17 +36,16 @@ namespace AssemblyCSharp
             }
         };
 
-        private List<Vector3> m_validPositions = new List<Vector3>();
+        private List<GridPlaceholder> m_gridPlaceholders = new List<GridPlaceholder>();
 
         private RangeQueryCache m_rangeQueryCache = new RangeQueryCache();
 
-        public ValidPositionProvider (GameObject[] listOfHoles)
+        public GridPositionProvider (GameObject[] listOfHoles)
         {
             m_rangeQueryCache = new RangeQueryCache ();
 
             foreach (GameObject hole in listOfHoles) {
-                Vector3 holePosition = hole.transform.position;
-                m_validPositions.Add (holePosition);
+                m_gridPlaceholders.Add (new GridPlaceholder(hole));
             }
         }
 
@@ -56,11 +55,12 @@ namespace AssemblyCSharp
             }
 
             float rangeSqr = range * range;
-            foreach(Vector3 validPosition in m_validPositions) {
-                Vector3 diffVector = position - validPosition;
+            foreach (GridPlaceholder placholder in m_gridPlaceholders) {
+                Vector3 placeholderPosition = placholder.GetWorldPosition();
+                Vector3 diffVector = position - placeholderPosition;
                 float distanceSqr = diffVector.sqrMagnitude;
                 if (distanceSqr < rangeSqr) {
-                    m_rangeQueryCache.SetValidPositionForRange (position, range, validPosition);
+                    m_rangeQueryCache.SetValidPlacholderForRange (position, range, placholder);
                     return true;
                 }
             }
@@ -70,18 +70,19 @@ namespace AssemblyCSharp
 
         public Vector3 GetValidPositionInRange(Vector3 position, float range) {
             if (m_rangeQueryCache.isEqualToChachedRange (position, range)) {
-                return m_rangeQueryCache.GetCachedValidPosition();
+                return m_rangeQueryCache.GetCachedValidPlacholder().GetWorldPosition();
             }
 
             float rangeSqr = range * range;
             Vector3 result = position;
-            foreach (Vector3 validPosition in m_validPositions) {
-                Vector3 diffVector = position - validPosition;
+            foreach (GridPlaceholder placholder in m_gridPlaceholders) {
+                Vector3 placeholderPosition = placholder.GetWorldPosition();
+                Vector3 diffVector = position - placeholderPosition;
                 float distanceSqr = diffVector.sqrMagnitude;
 
                 if (distanceSqr < rangeSqr) {
-                    m_rangeQueryCache.SetValidPositionForRange (position, range, validPosition);
-                    result = validPosition;
+                    m_rangeQueryCache.SetValidPlacholderForRange (position, range, placholder);
+                    result = placeholderPosition;
                 }
             }
             return result;
