@@ -35,13 +35,10 @@ public class GridPositionProvider
     };
 
     private List<GridPlaceholder> m_gridPlaceholders = new List<GridPlaceholder>();
-
     private RangeQueryCache m_rangeQueryCache = new RangeQueryCache();
 
     public GridPositionProvider (GameObject[] listOfHoles)
     {
-        m_rangeQueryCache = new RangeQueryCache ();
-
         foreach (GameObject hole in listOfHoles) {
             m_gridPlaceholders.Add (new GridPlaceholder(hole));
         }
