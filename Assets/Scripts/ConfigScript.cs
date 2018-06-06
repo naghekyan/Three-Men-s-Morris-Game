@@ -1,12 +1,8 @@
 ﻿using UnityEngine;
 
 public class ConfigScript : MonoBehaviour {
-    public int m_boardSize = 3;
-
-    public float m_snapRange = 1.7f;
-
-    private void Start() {
-    }
+    private readonly int m_boardSize = 3;
+    private readonly float m_snapRange = 1.7f;
 
     public float GetSnapingRange() {
         return m_snapRange;

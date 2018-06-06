@@ -1,13 +1,28 @@
 ﻿public class GridCoordinate {
-    public int m_column;
-    public int m_row;
+    private int m_column;
+    private int m_row;
 
     public GridCoordinate(int row = 0, int column = 0) {
         m_row = row;
         m_column = column;
     }
-}
 
+    public void SetRow(int row) {
+        m_row = row;
+    }
+    
+    public void SetColumn(int column) {
+        m_column = column;
+    }
+
+    public int GetRow() {
+        return m_row;
+    }
+
+    public int GetColumn() {
+        return m_column;
+    }
+}
 
 public class BoardCoordinate {
     public GridCoordinate m_gridCoordinate = new GridCoordinate(-1, -1);
@@ -37,6 +52,6 @@ public class MoveData {
 
         var start = startCoordinate.m_gridCoordinate;
         var end = endCoordinate.m_gridCoordinate;
-        return start.m_row != end.m_row || start.m_column != end.m_column;
+        return start.GetRow() != end.GetRow() || start.GetColumn() != end.GetColumn();
     }
 }

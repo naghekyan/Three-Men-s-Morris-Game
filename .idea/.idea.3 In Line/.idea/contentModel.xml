@@ -5,6 +5,7 @@
       <e p="3 In Line.sln" t="IncludeFlat" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets/Scripts" t="Include">
+        <e p="Board.cs" t="Include" />
         <e p="ConfigScript.cs" t="Include" />
         <e p="CoordinatesOnGridScript.cs" t="Include" />
         <e p="FieldColor.cs" t="Include" />

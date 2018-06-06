@@ -24,7 +24,8 @@ public class MoveScript : MonoBehaviour {
 
     private void InitWinDetector(ConfigScript configScript) {
         var boardSize = configScript.GetBoardSize();
-        m_winDetector = new WinDetector(boardSize);
+        var board = new Board(boardSize);
+        m_winDetector = new WinDetector(board);
     }
 
     private void Update() {

@@ -12,8 +12,10 @@ public class GridPlaceholder {
     private void PopulateIndexes(GameObject placholderGameObject) {
         var name = placholderGameObject.name;
         var size = name.Length;
-        m_coordinate.m_row = int.Parse(name[size - 2].ToString());
-        m_coordinate.m_column = int.Parse(name[size - 1].ToString());
+        var row = int.Parse(name[size - 2].ToString());
+        var column = int.Parse(name[size - 1].ToString());
+        m_coordinate.SetRow(row);
+        m_coordinate.SetColumn(column);
     }
 
     public GridCoordinate GetGridCoordinates() {
