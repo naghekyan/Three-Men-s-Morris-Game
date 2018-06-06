@@ -1,26 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FollowMouseScript : MonoBehaviour {
+    private readonly float m_positionLerpAlpha = 0.25f;
 
-    private float m_positionLerpAlpha = 0.25f;
+    private void Start() {
+    }
 
-	void Start () {
-		
-	}
-	
-	void Update () {
-		if (Input.GetMouseButtonUp (0)) {
-			Destroy(this);
-		}
-		
-		Vector3 mousePosition = Input.mousePosition;
-        Camera camera = Camera.main;
-        float zShiftCloserToCamera = -1.0f;
-        float zPosition = -camera.transform.position.z + zShiftCloserToCamera;
-        Vector3 targetPosition = camera.ScreenToWorldPoint (new Vector3 (mousePosition.x, mousePosition.y, zPosition));
-        Vector3 currentPosition = transform.position;
-        transform.position = Vector3.Lerp (currentPosition, targetPosition, m_positionLerpAlpha);
-	}
+    private void Update() {
+        if (Input.GetMouseButtonUp(0)) Destroy(this);
+
+        var mousePosition = Input.mousePosition;
+        var camera = Camera.main;
+        var zShiftCloserToCamera = -1.0f;
+        var zPosition = -camera.transform.position.z + zShiftCloserToCamera;
+        var targetPosition = camera.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, zPosition));
+        var currentPosition = transform.position;
+        transform.position = Vector3.Lerp(currentPosition, targetPosition, m_positionLerpAlpha);
+    }
 }

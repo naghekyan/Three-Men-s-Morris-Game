@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GridPlaceholder
-{
-    private GridCoordinate m_coordinate = new GridCoordinate();
-    private Vector3 m_position;
+public class GridPlaceholder {
+    private readonly GridCoordinate m_coordinate = new GridCoordinate();
+    private readonly Vector3 m_position;
 
     public GridPlaceholder(GameObject placholderGameObject) {
         m_position = placholderGameObject.transform.position;
@@ -13,8 +10,8 @@ public class GridPlaceholder
     }
 
     private void PopulateIndexes(GameObject placholderGameObject) {
-        string name = placholderGameObject.name;
-        int size = name.Length;
+        var name = placholderGameObject.name;
+        var size = name.Length;
         m_coordinate.m_row = int.Parse(name[size - 2].ToString());
         m_coordinate.m_column = int.Parse(name[size - 1].ToString());
     }
@@ -26,4 +23,4 @@ public class GridPlaceholder
     public Vector3 GetWorldPosition() {
         return m_position;
     }
-};
+}

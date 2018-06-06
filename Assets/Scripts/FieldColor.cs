@@ -1,2 +1,5 @@
-﻿
-public enum BoardCellColor {Empty, Blue, White};
+﻿public enum BoardCellColor {
+    Empty,
+    Blue,
+    White
+}

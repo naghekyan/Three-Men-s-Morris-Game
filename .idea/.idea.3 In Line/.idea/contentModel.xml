@@ -9,7 +9,6 @@
         <e p="CoordinatesOnGridScript.cs" t="Include" />
         <e p="FieldColor.cs" t="Include" />
         <e p="FollowMouseScript.cs" t="Include" />
-        <e p="GridCoordinates.cs" t="Include" />
         <e p="GridPlaceholder.cs" t="Include" />
         <e p="GridPositionProvider.cs" t="Include" />
         <e p="MoveData.cs" t="Include" />

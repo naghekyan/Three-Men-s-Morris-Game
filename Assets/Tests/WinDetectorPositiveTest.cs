@@ -1,11 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.TestTools;
-using NUnit.Framework;
-using System.Collections;
-
-public class WinDetectorPositiveTest {
-
-	private int m_boardSize = 3;
+﻿public class WinDetectorPositiveTest {
+    private int m_boardSize = 3;
 /* 
 	[UnityTest]
 	public IEnumerator DetectWinOnFirstRow() {

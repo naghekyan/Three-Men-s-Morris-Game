@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SnapToGridScript : MonoBehaviour {
-	
+    private readonly float m_targetReachingThreshold = 0.01f;
     private float m_positionLerpAlpha = 0.35f;
-	private bool m_isDropped = false;
-	private float m_targetReachingThreshold = 0.01f;
-	private GridPositionProvider m_gridPositionProvider;
+    private GridPositionProvider m_gridPositionProvider;
+    private bool m_isDropped = false;
 
-	void Start () {
+    void Start() {
         var gameController = GameObject.FindWithTag("GameController");
         SetGridPositionProvider(gameController);
     }
@@ -20,33 +16,33 @@ public class SnapToGridScript : MonoBehaviour {
         m_gridPositionProvider = moveScript.GetGridPositionProvider();
     }
 
-    void Update () {
+    void Update() {
         SnapToValidPosition();
-		SnapToGridOnDrop();
-	}
+        SnapToGridOnDrop();
+    }
 
     private void SnapToValidPosition() {
-        Vector3 position = transform.position;
+        var position = transform.position;
 
-        if (m_gridPositionProvider.IsValidPositionInRangeExists (position)) {
-            GridPlaceholder gridPlacholder = m_gridPositionProvider.GetGridPlacholderInRange (position);
-            Vector3 targetPosition = gridPlacholder.GetWorldPosition();
-            transform.position = Vector3.Lerp (position, targetPosition, m_positionLerpAlpha);
+        if (m_gridPositionProvider.IsValidPositionInRangeExists(position)) {
+            var gridPlacholder = m_gridPositionProvider.GetGridPlacholderInRange(position);
+            var targetPosition = gridPlacholder.GetWorldPosition();
+            transform.position = Vector3.Lerp(position, targetPosition, m_positionLerpAlpha);
 
             if (IsDroppedAndRichedToGridPosition(position, targetPosition)) {
-                Destroy (this);
+                Destroy(this);
             }
         }
     }
 
-	private bool IsDroppedAndRichedToGridPosition(Vector3 position, Vector3 targetPosition) {
-		return m_isDropped && Vector3.Distance (position, targetPosition) < m_targetReachingThreshold;
-	}
+    private bool IsDroppedAndRichedToGridPosition(Vector3 position, Vector3 targetPosition) {
+        return m_isDropped && Vector3.Distance(position, targetPosition) < m_targetReachingThreshold;
+    }
 
-	void SnapToGridOnDrop() {
-		if (Input.GetMouseButtonUp (0)) {
+    private void SnapToGridOnDrop() {
+        if (Input.GetMouseButtonUp(0)) {
             m_isDropped = true;
-			m_positionLerpAlpha = 0.2f;
+            m_positionLerpAlpha = 0.2f;
         }
-	}
+    }
 }
