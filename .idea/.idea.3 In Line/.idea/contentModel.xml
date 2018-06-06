@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p="3 In Line.sln" t="IncludeFlat" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets/Scripts" t="Include">
+        <e p="ConfigScript.cs" t="Include" />
+        <e p="CoordinatesOnGridScript.cs" t="Include" />
+        <e p="FieldColor.cs" t="Include" />
+        <e p="FollowMouseScript.cs" t="Include" />
+        <e p="GridCoordinates.cs" t="Include" />
+        <e p="GridPlaceholder.cs" t="Include" />
+        <e p="GridPositionProvider.cs" t="Include" />
+        <e p="MoveData.cs" t="Include" />
+        <e p="MoveScript.cs" t="Include" />
+        <e p="SnapToGridScript.cs" t="Include" />
+        <e p="WinDetector.cs" t="Include" />
+      </e>
+      <e p="Assets/Tests" t="Include">
+        <e p="WinDetectorNegativeTest.cs" t="Include" />
+        <e p="WinDetectorPositiveTest.cs" t="Include" />
+      </e>
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+    </e>
+    <e p="$USER_HOME$/Library/Caches/Rider2018.1/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_3 In Line.1607865560.00" t="ExcludeRecursive" />
+  </component>
+</project>

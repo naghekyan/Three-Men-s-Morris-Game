@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - BlueBall
-  - WhiteBall
   - Hole
+  - Blue
+  - White
   layers:
   - Default
   - TransparentFX

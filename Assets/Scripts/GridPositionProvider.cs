@@ -36,26 +36,28 @@ public class GridPositionProvider
 
     private List<GridPlaceholder> m_gridPlaceholders = new List<GridPlaceholder>();
     private RangeQueryCache m_rangeQueryCache = new RangeQueryCache();
+    private float m_snapRange = 1.7f;
 
-    public GridPositionProvider (GameObject[] listOfHoles)
-    {
+    public GridPositionProvider (GameObject[] listOfHoles, float snapRange) {
         foreach (GameObject hole in listOfHoles) {
             m_gridPlaceholders.Add (new GridPlaceholder(hole));
         }
+
+        m_snapRange = snapRange;
     }
 
-    public bool IsValidPositionInRangeExists(Vector3 position, float range) {
-        if (m_rangeQueryCache.isEqualToChachedRange (position, range)) {
+    public bool IsValidPositionInRangeExists(Vector3 position) {
+        if (m_rangeQueryCache.isEqualToChachedRange (position, m_snapRange)) {
             return true;
         }
 
-        float rangeSqr = range * range;
+        float rangeSqr = m_snapRange * m_snapRange;
         foreach (GridPlaceholder placholder in m_gridPlaceholders) {
             Vector3 placeholderPosition = placholder.GetWorldPosition();
             Vector3 diffVector = position - placeholderPosition;
             float distanceSqr = diffVector.sqrMagnitude;
             if (distanceSqr < rangeSqr) {
-                m_rangeQueryCache.SetValidPlacholderForRange (position, range, placholder);
+                m_rangeQueryCache.SetValidPlacholderForRange (position, m_snapRange, placholder);
                 return true;
             }
         }
@@ -63,12 +65,12 @@ public class GridPositionProvider
         return false;
     }
 
-    public GridPlaceholder GetGridPlacholderInRange(Vector3 position, float range) {
-        if (m_rangeQueryCache.isEqualToChachedRange (position, range)) {
+    public GridPlaceholder GetGridPlacholderInRange(Vector3 position) {
+        if (m_rangeQueryCache.isEqualToChachedRange (position, m_snapRange)) {
             return m_rangeQueryCache.GetCachedValidPlacholder();
         }
 
-        float rangeSqr = range * range;
+        float rangeSqr = m_snapRange * m_snapRange;
         GridPlaceholder result = null;
         foreach (GridPlaceholder placholder in m_gridPlaceholders) {
             Vector3 placeholderPosition = placholder.GetWorldPosition();
@@ -76,7 +78,7 @@ public class GridPositionProvider
             float distanceSqr = diffVector.sqrMagnitude;
 
             if (distanceSqr < rangeSqr) {
-                m_rangeQueryCache.SetValidPlacholderForRange (position, range, placholder);
+                m_rangeQueryCache.SetValidPlacholderForRange (position, m_snapRange, placholder);
                 result = placholder;
             }
         }

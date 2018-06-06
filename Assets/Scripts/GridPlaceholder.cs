@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GridPlaceholder
 {
-    private GridCoordinate m_coordinate;
+    private GridCoordinate m_coordinate = new GridCoordinate();
     private Vector3 m_position;
 
     public GridPlaceholder(GameObject placholderGameObject) {
@@ -15,8 +15,8 @@ public class GridPlaceholder
     private void PopulateIndexes(GameObject placholderGameObject) {
         string name = placholderGameObject.name;
         int size = name.Length;
-        m_coordinate.row = int.Parse(name[size - 2].ToString());
-        m_coordinate.column = int.Parse(name[size - 1].ToString());
+        m_coordinate.m_row = int.Parse(name[size - 2].ToString());
+        m_coordinate.m_column = int.Parse(name[size - 1].ToString());
     }
 
     public GridCoordinate GetGridCoordinates() {
