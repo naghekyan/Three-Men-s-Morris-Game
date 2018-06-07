@@ -6,13 +6,13 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets/Scripts" t="Include">
         <e p="Board.cs" t="Include" />
+        <e p="CombinedPosition.cs" t="Include" />
         <e p="ConfigScript.cs" t="Include" />
         <e p="CoordinatesOnGridScript.cs" t="Include" />
         <e p="FieldColor.cs" t="Include" />
         <e p="FollowMouseScript.cs" t="Include" />
-        <e p="GridPlaceholder.cs" t="Include" />
+        <e p="GameDatastructures.cs" t="Include" />
         <e p="GridPositionProvider.cs" t="Include" />
-        <e p="MoveData.cs" t="Include" />
         <e p="MoveScript.cs" t="Include" />
         <e p="SnapToGridScript.cs" t="Include" />
         <e p="WinDetector.cs" t="Include" />

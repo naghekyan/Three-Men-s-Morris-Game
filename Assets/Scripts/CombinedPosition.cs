@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class GridPlaceholder {
+public class CombinedPosition {
     private readonly GridCoordinate m_coordinate = new GridCoordinate();
     private readonly Vector3 m_position;
 
-    public GridPlaceholder(GameObject placholderGameObject) {
+    public CombinedPosition(GameObject placholderGameObject) {
         m_position = placholderGameObject.transform.position;
         PopulateIndexes(placholderGameObject);
     }

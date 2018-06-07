@@ -29,11 +29,14 @@ public class MoveScript : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)) {
             TryToGrabBall();
-        else if (Input.GetMouseButtonUp(0))
-            if (m_grabbedBall != null)
-                MoveBall();
+        }
+        else if (Input.GetMouseButtonUp(0)) {
+            if (m_grabbedBall != null) {
+                    MoveBall();
+            }
+        }
     }
 
     private void TryToGrabBall() {
@@ -79,9 +82,9 @@ public class MoveScript : MonoBehaviour {
     }
 
     private GridCoordinate GetCoordinatesByPosition(Vector3 position) {
-        var placholder = m_gridPositionProvider.GetGridPlacholderInRange(position);
-        var newCoordinates = placholder.GetGridCoordinates();
-        return newCoordinates;
+        var combinedPosition = m_gridPositionProvider.GetGridCombinedPosition(position);
+        var gridCoordinates = combinedPosition.GetGridCoordinates();
+        return gridCoordinates;
     }
 
     private void UngrabBall() {

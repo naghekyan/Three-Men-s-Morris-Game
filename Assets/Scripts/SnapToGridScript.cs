@@ -25,8 +25,8 @@ public class SnapToGridScript : MonoBehaviour {
         var position = transform.position;
 
         if (m_gridPositionProvider.IsValidPositionInRangeExists(position)) {
-            var gridPlacholder = m_gridPositionProvider.GetGridPlacholderInRange(position);
-            var targetPosition = gridPlacholder.GetWorldPosition();
+            var combinedPosition = m_gridPositionProvider.GetGridCombinedPosition(position);
+            var targetPosition = combinedPosition.GetWorldPosition();
             transform.position = Vector3.Lerp(position, targetPosition, m_positionLerpAlpha);
 
             if (IsDroppedAndRichedToGridPosition(position, targetPosition)) {

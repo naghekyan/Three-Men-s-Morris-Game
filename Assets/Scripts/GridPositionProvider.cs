@@ -2,26 +2,32 @@
 using UnityEngine;
 
 public class GridPositionProvider {
-    private readonly List<GridPlaceholder> m_gridPlaceholders = new List<GridPlaceholder>();
+    private readonly List<CombinedPosition> m_gridCombinedPositions = new List<CombinedPosition>();
     private readonly RangeQueryCache m_rangeQueryCache = new RangeQueryCache();
-    private readonly float m_snapRange = 1.7f;
+    private readonly float m_snapRadius = 1.7f;
 
-    public GridPositionProvider(GameObject[] listOfHoles, float snapRange) {
-        foreach (var hole in listOfHoles) m_gridPlaceholders.Add(new GridPlaceholder(hole));
+    public GridPositionProvider(GameObject[] listOfHoles, float snapRadius) {
+        foreach (var hole in listOfHoles) {
+            m_gridCombinedPositions.Add(new CombinedPosition(hole));
+        }
 
-        m_snapRange = snapRange;
+        m_snapRadius = snapRadius;
     }
 
     public bool IsValidPositionInRangeExists(Vector3 position) {
-        if (m_rangeQueryCache.isEqualToChachedRange(position, m_snapRange)) return true;
+        var snapRange = new Range(position, m_snapRadius);
+        if (m_rangeQueryCache.IsEqualToChachedRange(snapRange)) {
+            return true;
+        }
 
-        var rangeSqr = m_snapRange * m_snapRange;
-        foreach (var placholder in m_gridPlaceholders) {
-            var placeholderPosition = placholder.GetWorldPosition();
-            var diffVector = position - placeholderPosition;
+        var radiusSqr = m_snapRadius * m_snapRadius;
+        foreach (var gridCombinedPosition in m_gridCombinedPositions) {
+            var positionOnGrid = gridCombinedPosition.GetWorldPosition();
+            var diffVector = position - positionOnGrid;
             var distanceSqr = diffVector.sqrMagnitude;
-            if (distanceSqr < rangeSqr) {
-                m_rangeQueryCache.SetValidPlacholderForRange(position, m_snapRange, placholder);
+            
+            if (distanceSqr < radiusSqr) {
+                m_rangeQueryCache.SetCombinedPositionForRange(snapRange, gridCombinedPosition);
                 return true;
             }
         }
@@ -29,20 +35,22 @@ public class GridPositionProvider {
         return false;
     }
 
-    public GridPlaceholder GetGridPlacholderInRange(Vector3 position) {
-        if (m_rangeQueryCache.isEqualToChachedRange(position, m_snapRange))
-            return m_rangeQueryCache.GetCachedValidPlacholder();
+    public CombinedPosition GetGridCombinedPosition(Vector3 position) {
+        var snapRange = new Range(position, m_snapRadius);
+        if (m_rangeQueryCache.IsEqualToChachedRange(snapRange)) {
+            return m_rangeQueryCache.GetCombinedPosition();
+        }
 
-        var rangeSqr = m_snapRange * m_snapRange;
-        GridPlaceholder result = null;
-        foreach (var placholder in m_gridPlaceholders) {
-            var placeholderPosition = placholder.GetWorldPosition();
-            var diffVector = position - placeholderPosition;
+        var radiusSqr = m_snapRadius * m_snapRadius;
+        CombinedPosition result = null;
+        foreach (var gridCombinedPosition in m_gridCombinedPositions) {
+            var positionOnGrid = gridCombinedPosition.GetWorldPosition();
+            var diffVector = position - positionOnGrid;
             var distanceSqr = diffVector.sqrMagnitude;
 
-            if (distanceSqr < rangeSqr) {
-                m_rangeQueryCache.SetValidPlacholderForRange(position, m_snapRange, placholder);
-                result = placholder;
+            if (distanceSqr < radiusSqr) {
+                m_rangeQueryCache.SetCombinedPositionForRange(snapRange, gridCombinedPosition);
+                result = gridCombinedPosition;
             }
         }
 
@@ -50,27 +58,28 @@ public class GridPositionProvider {
     }
 
     private class RangeQueryCache {
-        private readonly float m_epislon = float.Epsilon;
-        private Vector3 m_rangeCenter;
-        private float m_rangeRadius;
-        private GridPlaceholder m_validPlacholder;
+        private readonly float m_epsilon = float.Epsilon;
+        private Range m_range;
+        private CombinedPosition m_combinedPosition;
 
-        public void SetValidPlacholderForRange(Vector3 rangeCenter, float rangeRadius,
-            GridPlaceholder validPlacholder) {
-            m_rangeCenter = rangeCenter;
-            m_rangeRadius = rangeRadius;
-            m_validPlacholder = validPlacholder;
+        public void SetCombinedPositionForRange(Range range, CombinedPosition combinedPosition) {
+            m_range = range;
+            m_combinedPosition = combinedPosition;
         }
 
-        public GridPlaceholder GetCachedValidPlacholder() {
-            return m_validPlacholder;
+        public CombinedPosition GetCombinedPosition() {
+            return m_combinedPosition;
         }
 
-        public bool isEqualToChachedRange(Vector3 rangeCenter, float rangeRadius) {
-            return Mathf.Abs(rangeRadius - m_rangeRadius) < m_epislon
-                   && Mathf.Abs(rangeCenter.x - m_rangeCenter.x) < m_epislon
-                   && Mathf.Abs(rangeCenter.y - m_rangeCenter.y) < m_epislon
-                   && Mathf.Abs(rangeCenter.z - m_rangeCenter.z) < m_epislon;
+        public bool IsEqualToChachedRange(Range other) {
+            var radius = m_range.radius;
+            var center = m_range.center;
+            var otherRadius = other.radius;
+            var otherCenter = other.center;
+            return Mathf.Abs(otherRadius - radius) < m_epsilon
+                   && Mathf.Abs(otherCenter.x - center.x) < m_epsilon
+                   && Mathf.Abs(otherCenter.y - center.y) < m_epsilon
+                   && Mathf.Abs(otherCenter.z - center.z) < m_epsilon;
         }
     }
 }
