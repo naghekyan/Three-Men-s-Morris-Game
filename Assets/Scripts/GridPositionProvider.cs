@@ -1,85 +1,66 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridPositionProvider {
-    private readonly List<CombinedPosition> m_gridCombinedPositions = new List<CombinedPosition>();
-    private readonly RangeQueryCache m_rangeQueryCache = new RangeQueryCache();
+    private readonly List<CombinedPosition> m_gridPositions = new List<CombinedPosition>();
     private readonly float m_snapRadius = 1.7f;
+    private int m_lastMatchedPivotIndex = 0;
 
     public GridPositionProvider(GameObject[] listOfHoles, float snapRadius) {
         foreach (var hole in listOfHoles) {
-            m_gridCombinedPositions.Add(new CombinedPosition(hole));
+            m_gridPositions.Add(new CombinedPosition(hole));
         }
 
         m_snapRadius = snapRadius;
     }
 
-    public bool IsValidPositionInRangeExists(Vector3 position) {
-        var snapRange = new Range(position, m_snapRadius);
-        if (m_rangeQueryCache.IsEqualToChachedRange(snapRange)) {
+    public CombinedPosition GetCombinedPosition(Vector3 position) {
+        if (IsPivotInRangeExist(position)) {
+            return m_gridPositions[m_lastMatchedPivotIndex];
+        }
+        else {
+            throw new Exception("No CombinedPosition is available for `position = `" + position.ToString());
+        }
+    }
+    
+    public bool IsPivotInRangeExist(Vector3 position) {
+        if (IsLastMatchedPivotMatching(position)) {
             return true;
         }
 
+        var isPivotInRangeExist = GetIndexOfMatchingPivot(position) != -1;
+        return isPivotInRangeExist;
+    }
+    
+    private bool IsLastMatchedPivotMatching(Vector3 position) {
+        var pivotPosition = GetPivotPositionByIndex(m_lastMatchedPivotIndex);
+        return IsPositionInPivotRange(position, pivotPosition);
+    }
+
+    private Vector3 GetPivotPositionByIndex(int index) {
+        var latestReturnedCombinedPosition = m_gridPositions[index];
+        var positionOnGrid = latestReturnedCombinedPosition.GetWorldPosition();
+        return positionOnGrid;
+    }
+    
+    private bool IsPositionInPivotRange(Vector3 position, Vector3 pivot) {
         var radiusSqr = m_snapRadius * m_snapRadius;
-        foreach (var gridCombinedPosition in m_gridCombinedPositions) {
-            var positionOnGrid = gridCombinedPosition.GetWorldPosition();
-            var diffVector = position - positionOnGrid;
-            var distanceSqr = diffVector.sqrMagnitude;
-            
-            if (distanceSqr < radiusSqr) {
-                m_rangeQueryCache.SetCombinedPositionForRange(snapRange, gridCombinedPosition);
-                return true;
+        var diffVector = position - pivot;
+        var distanceSqr = diffVector.sqrMagnitude;
+        return distanceSqr < radiusSqr;
+    }
+    
+    private int GetIndexOfMatchingPivot(Vector3 position) {
+        var size = m_gridPositions.Count;
+        for (var i = 0; i < size; ++i) {
+            var pivotPosition = GetPivotPositionByIndex(i);
+            if (IsPositionInPivotRange(position, pivotPosition)) {
+                m_lastMatchedPivotIndex = i;
+                return i;
             }
         }
 
-        return false;
-    }
-
-    public CombinedPosition GetGridCombinedPosition(Vector3 position) {
-        var snapRange = new Range(position, m_snapRadius);
-        if (m_rangeQueryCache.IsEqualToChachedRange(snapRange)) {
-            return m_rangeQueryCache.GetCombinedPosition();
-        }
-
-        var radiusSqr = m_snapRadius * m_snapRadius;
-        CombinedPosition result = null;
-        foreach (var gridCombinedPosition in m_gridCombinedPositions) {
-            var positionOnGrid = gridCombinedPosition.GetWorldPosition();
-            var diffVector = position - positionOnGrid;
-            var distanceSqr = diffVector.sqrMagnitude;
-
-            if (distanceSqr < radiusSqr) {
-                m_rangeQueryCache.SetCombinedPositionForRange(snapRange, gridCombinedPosition);
-                result = gridCombinedPosition;
-            }
-        }
-
-        return result;
-    }
-
-    private class RangeQueryCache {
-        private readonly float m_epsilon = float.Epsilon;
-        private Range m_range;
-        private CombinedPosition m_combinedPosition;
-
-        public void SetCombinedPositionForRange(Range range, CombinedPosition combinedPosition) {
-            m_range = range;
-            m_combinedPosition = combinedPosition;
-        }
-
-        public CombinedPosition GetCombinedPosition() {
-            return m_combinedPosition;
-        }
-
-        public bool IsEqualToChachedRange(Range other) {
-            var radius = m_range.radius;
-            var center = m_range.center;
-            var otherRadius = other.radius;
-            var otherCenter = other.center;
-            return Mathf.Abs(otherRadius - radius) < m_epsilon
-                   && Mathf.Abs(otherCenter.x - center.x) < m_epsilon
-                   && Mathf.Abs(otherCenter.y - center.y) < m_epsilon
-                   && Mathf.Abs(otherCenter.z - center.z) < m_epsilon;
-        }
+        return -1;
     }
 }

@@ -63,7 +63,7 @@ public class MoveScript : MonoBehaviour {
 
     private void MoveBall() {
         var position = m_grabbedBall.transform.position;
-        if (m_gridPositionProvider.IsValidPositionInRangeExists(position)) {
+        if (m_gridPositionProvider.IsPivotInRangeExist(position)) {
             var newCoordinates = GetCoordinatesByPosition(position);
 
             var previousCoordinates = m_grabbedBall.GetComponent<CoordinatesOnGridScript>();
@@ -82,7 +82,7 @@ public class MoveScript : MonoBehaviour {
     }
 
     private GridCoordinate GetCoordinatesByPosition(Vector3 position) {
-        var combinedPosition = m_gridPositionProvider.GetGridCombinedPosition(position);
+        var combinedPosition = m_gridPositionProvider.GetCombinedPosition(position);
         var gridCoordinates = combinedPosition.GetGridCoordinates();
         return gridCoordinates;
     }

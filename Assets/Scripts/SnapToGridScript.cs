@@ -24,8 +24,8 @@ public class SnapToGridScript : MonoBehaviour {
     private void SnapToValidPosition() {
         var position = transform.position;
 
-        if (m_gridPositionProvider.IsValidPositionInRangeExists(position)) {
-            var combinedPosition = m_gridPositionProvider.GetGridCombinedPosition(position);
+        if (m_gridPositionProvider.IsPivotInRangeExist(position)) {
+            var combinedPosition = m_gridPositionProvider.GetCombinedPosition(position);
             var targetPosition = combinedPosition.GetWorldPosition();
             transform.position = Vector3.Lerp(position, targetPosition, m_positionLerpAlpha);
 
