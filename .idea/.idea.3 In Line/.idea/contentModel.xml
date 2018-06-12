@@ -12,6 +12,7 @@
         <e p="FieldColor.cs" t="Include" />
         <e p="FollowMouseScript.cs" t="Include" />
         <e p="GameDatastructures.cs" t="Include" />
+        <e p="GameOverScript.cs" t="Include" />
         <e p="GridPositionProvider.cs" t="Include" />
         <e p="MoveScript.cs" t="Include" />
         <e p="SnapToGridScript.cs" t="Include" />

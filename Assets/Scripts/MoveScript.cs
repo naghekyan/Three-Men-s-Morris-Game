@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 
 public class MoveScript : MonoBehaviour {
+    public delegate void GameOverAction();
+    public static event GameOverAction OnGameOver;
+    
     private BoardCellColor m_colorToMove = BoardCellColor.Blue;
     private GameObject m_grabbedBall;
     private GridPositionProvider m_gridPositionProvider;
     private WinDetector m_winDetector;
-
+    private bool m_isGameOver = false;
+    
     public GridPositionProvider GetGridPositionProvider() {
         return m_gridPositionProvider;
     }
@@ -29,6 +33,10 @@ public class MoveScript : MonoBehaviour {
     }
 
     private void Update() {
+        if (m_isGameOver) {
+            return;
+        }
+        
         if (Input.GetMouseButtonDown(0)) {
             TryToGrabBall();
         }
@@ -66,6 +74,7 @@ public class MoveScript : MonoBehaviour {
         if (m_gridPositionProvider.IsPivotInRangeExist(position)) {
             var newCoordinates = GetCoordinatesByPosition(position);
 
+            // TODO build move in a better way and use color in the move data
             var previousCoordinates = m_grabbedBall.GetComponent<CoordinatesOnGridScript>();
             var move = new MoveData();
             move.startCoordinate = previousCoordinates.GetBoardCoordinates();
@@ -73,6 +82,12 @@ public class MoveScript : MonoBehaviour {
 
             if (move.IsChangingLocation()) {
                 m_winDetector.DoMove(move, m_colorToMove);
+                if (m_winDetector.IsWinDetected(m_colorToMove)) {
+                    m_isGameOver = true;
+                    if (OnGameOver != null) {
+                        OnGameOver();
+                    }
+                }
                 m_grabbedBall.GetComponent<CoordinatesOnGridScript>().SetGridCoordinates(newCoordinates);
                 m_colorToMove = m_colorToMove == BoardCellColor.Blue ? BoardCellColor.White : BoardCellColor.Blue;
             }

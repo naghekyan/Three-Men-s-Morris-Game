@@ -1,15 +1,4 @@
-﻿using UnityEngine;
-
-public struct Range {
-    public Range(Vector3 centerArg, float radiusArg) {
-        center = centerArg;
-        radius = radiusArg;
-    }
-    
-    public Vector3 center;
-    public float radius;
-}
-
+﻿
 public class GridCoordinate {
     private int m_column;
     private int m_row;
