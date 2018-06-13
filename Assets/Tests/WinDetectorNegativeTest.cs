@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using NUnit.Framework;
 using UnityEngine;
@@ -21,14 +22,14 @@ public class WinDetectorNegativeTest {
         var move = new MoveData();
 
         var coordinate = new GridCoordinate(0, 0);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.White);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.White);
+        winDetector.DoMove(move);
         coordinate = new GridCoordinate(1, 1);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
         coordinate = new GridCoordinate(2, 2);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
 
         const bool expectedValue = false;
         Assert.AreEqual(expectedValue, winDetector.IsWinDetected(BoardCellColor.Blue));
@@ -41,14 +42,14 @@ public class WinDetectorNegativeTest {
         var winDetector = GetWinDetector();
         var move = new MoveData();
         var coordinate = new GridCoordinate(0, 2);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.White);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.White);
+        winDetector.DoMove(move);
         coordinate = new GridCoordinate(1, 1);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.White);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.White);
+        winDetector.DoMove(move);
         coordinate = new GridCoordinate(2, 0);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
 
         const bool expectedValue = false;
         Assert.AreEqual(expectedValue, winDetector.IsWinDetected(BoardCellColor.Blue));
@@ -62,14 +63,14 @@ public class WinDetectorNegativeTest {
         var move = new MoveData();
 
         var coordinate = new GridCoordinate(0, 0);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
         coordinate = new GridCoordinate(1, 1);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
         coordinate.SetColumn(2);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
 
         const bool expectedValue = false;
         Assert.AreEqual(expectedValue, winDetector.IsWinDetected(BoardCellColor.Blue));
@@ -82,16 +83,34 @@ public class WinDetectorNegativeTest {
         var winDetector = GetWinDetector();
         var move = new MoveData();
         var coordinate = new GridCoordinate(0, 0);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
         coordinate.SetColumn(1);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.White);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.White);
+        winDetector.DoMove(move);
         coordinate.SetColumn(2);
-        move.SetupFirstMoveToGrid(coordinate);
-        winDetector.DoMove(move, BoardCellColor.Blue);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
 
         const bool expectedValue = false;
         Assert.AreEqual(expectedValue, winDetector.IsWinDetected(BoardCellColor.Blue));
+    }
+    
+    [UnityTest]
+    public IEnumerator NegativeOutOfGridRangeIndex() {
+
+        yield return null;
+        var winDetector = GetWinDetector();
+        var move = new MoveData();
+        var coordinate = new GridCoordinate(0, 0);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        winDetector.DoMove(move);
+        coordinate.SetColumn(1);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.White);
+        winDetector.DoMove(move);
+        coordinate.SetColumn(7);
+        move.SetupFirstMoveToGrid(coordinate, BoardCellColor.Blue);
+        
+        Assert.That(() => winDetector.DoMove(move), Throws.TypeOf<Exception>());
     }
 }

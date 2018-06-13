@@ -9,9 +9,8 @@ public class WinDetector {
         m_board = board;
     }
 
-    public void DoMove(MoveData move, BoardCellColor color) {
-        m_board.DoMove(move, color);
-        Debug.Log("Is move resulted to WIN: " + IsWinDetected(color));
+    public void DoMove(MoveData move) {
+        m_board.DoMove(move);
     }
     
     public bool IsWinDetected(BoardCellColor playerColor) {

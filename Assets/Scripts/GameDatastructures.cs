@@ -33,26 +33,52 @@ public class BoardCoordinate {
         m_isOnGrid = isOnGrid;
         m_gridCoordinate = gridCoordinate;
     }
+
+    public bool IsOnGrid() {
+        return m_isOnGrid;
+    }
 }
 
 public class MoveData {
-    public BoardCellColor color = BoardCellColor.Empty;
-    public BoardCoordinate endCoordinate = new BoardCoordinate(false, new GridCoordinate(-1, -1));
-    public BoardCoordinate startCoordinate = new BoardCoordinate(false, new GridCoordinate(-1, -1));
+    private BoardCellColor m_color = BoardCellColor.Empty;
+    public BoardCoordinate m_endCoordinate = new BoardCoordinate(false, new GridCoordinate(-1, -1));
+    public BoardCoordinate m_startCoordinate = new BoardCoordinate(false, new GridCoordinate(-1, -1));
 
-    public void SetupFirstMoveToGrid(GridCoordinate gridCoordinate) {
-        startCoordinate.m_isOnGrid = false;
-        endCoordinate.m_isOnGrid = true;
-        endCoordinate.m_gridCoordinate = gridCoordinate;
+    public MoveData() {
+    }
+
+    public MoveData(BoardCellColor color, BoardCoordinate start, BoardCoordinate end) {
+        m_color = color;
+        m_startCoordinate = start;
+        m_endCoordinate = end;
+    }
+
+    public BoardCellColor GetMoveColor() {
+        return m_color;
+    } 
+    
+    public void SetupFirstMoveToGrid(GridCoordinate gridCoordinate, BoardCellColor color) {
+        m_color = color;
+        m_startCoordinate.m_isOnGrid = false;
+        m_endCoordinate.m_isOnGrid = true;
+        m_endCoordinate.m_gridCoordinate = gridCoordinate;
     }
 
     public bool IsChangingLocation() {
-        if (!startCoordinate.m_isOnGrid) {
+        if (!m_startCoordinate.m_isOnGrid) {
             return true;
         }
 
-        var start = startCoordinate.m_gridCoordinate;
-        var end = endCoordinate.m_gridCoordinate;
+        var start = m_startCoordinate.m_gridCoordinate;
+        var end = m_endCoordinate.m_gridCoordinate;
         return start.GetRow() != end.GetRow() || start.GetColumn() != end.GetColumn();
+    }
+
+    public bool IsStartOnGrid() {
+        return m_startCoordinate.IsOnGrid();
+    }
+
+    public bool IsEndOnGrid() {
+        return m_endCoordinate.IsOnGrid();
     }
 }

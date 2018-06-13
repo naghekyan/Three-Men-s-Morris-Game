@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
+using UnityEditor.Android;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Board {
     private readonly int m_boardSize = 3;
     private readonly List<List<BoardCellColor>> m_board = new List<List<BoardCellColor>>();
-
+    private readonly MoveValidator m_moveValidator = null;
+    
     public Board(int boardSize) {
         m_boardSize = boardSize;
         Reset();
+        m_moveValidator = new MoveValidator(this);
     }
 
     private void Reset() {
@@ -25,18 +28,6 @@ public class Board {
     public int GetBoardSize() {
         return m_boardSize;
     }
-    
-    private bool IsValidMove(GridCoordinate coordinates) {
-        var isOnBoard = IsOnGrid(coordinates);
-        var isFieldEmpty = GetCellColor(coordinates) == BoardCellColor.Empty;
-        return isOnBoard && isFieldEmpty;
-    }
-
-    private bool IsOnGrid(GridCoordinate coordinates) {
-        var isInRowRange = coordinates.GetRow() >= 0 && coordinates.GetRow() < m_boardSize;
-        var isInColumnRange = coordinates.GetColumn() >= 0 && coordinates.GetColumn() < m_boardSize;
-        return isInRowRange && isInColumnRange;
-    }
 
     public BoardCellColor GetCellColor(GridCoordinate coordinates) {
         return m_board[coordinates.GetRow()][coordinates.GetColumn()];
@@ -46,30 +37,16 @@ public class Board {
         m_board[coordinates.GetRow()][coordinates.GetColumn()] = color;
     }
     
-    public void DoMove(MoveData move, BoardCellColor color) {
-        if (!move.startCoordinate.m_isOnGrid) {
-            var newCoordinates = move.endCoordinate.m_gridCoordinate;
-            Assert.IsTrue(move.endCoordinate.m_isOnGrid, "Shoudl be on the Grid.");
-            Assert.IsTrue(IsValidMove(newCoordinates), "Move is not valid.");
-            SetCellColor(newCoordinates, color);
-        }
-        else {
-            var startGridCoordinate = move.startCoordinate.m_gridCoordinate;
-            var endGridCoordinate = move.endCoordinate.m_gridCoordinate;
-            Assert.IsTrue(IsColorExistInCoordinate(move.startCoordinate, color), "Previous coordinate is not valid.");
-            SetCellColor(startGridCoordinate, BoardCellColor.Empty);
-            SetCellColor(endGridCoordinate, color);
-        }
-    }
-    
-    private bool IsColorExistInCoordinate(BoardCoordinate boardCoordinate, BoardCellColor color) {
-        var gridCoordinate = boardCoordinate.m_gridCoordinate;
-        if (!boardCoordinate.m_isOnGrid) {
-            return true;
-        }
+    public void DoMove(MoveData move) {
+        m_moveValidator.Validate(move);
 
-        var isOnGrid = IsOnGrid(gridCoordinate);
-        var isColorCorrect = m_board[gridCoordinate.GetRow()][gridCoordinate.GetColumn()] == color;
-        return isOnGrid && isColorCorrect;
+        if (move.m_startCoordinate.m_isOnGrid) {
+            var startGridCoordinate = move.m_startCoordinate.m_gridCoordinate;
+            SetCellColor(startGridCoordinate, BoardCellColor.Empty);
+        }
+        
+        var color = move.GetMoveColor();
+        var endGridCoordinate = move.m_endCoordinate.m_gridCoordinate;
+        SetCellColor(endGridCoordinate, color);
     }
 }

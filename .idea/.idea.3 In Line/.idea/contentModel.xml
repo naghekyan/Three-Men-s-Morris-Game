@@ -15,6 +15,7 @@
         <e p="GameOverScript.cs" t="Include" />
         <e p="GridPositionProvider.cs" t="Include" />
         <e p="MoveScript.cs" t="Include" />
+        <e p="MoveValidator.cs" t="Include" />
         <e p="SnapToGridScript.cs" t="Include" />
         <e p="WinDetector.cs" t="Include" />
       </e>

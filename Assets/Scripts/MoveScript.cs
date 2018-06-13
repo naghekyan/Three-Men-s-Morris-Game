@@ -42,7 +42,7 @@ public class MoveScript : MonoBehaviour {
         }
         else if (Input.GetMouseButtonUp(0)) {
             if (m_grabbedBall != null) {
-                    MoveBall();
+                ProcessBallDrop();
             }
         }
     }
@@ -69,33 +69,50 @@ public class MoveScript : MonoBehaviour {
         m_grabbedBall = hitGameObject;
     }
 
-    private void MoveBall() {
+    private void ProcessBallDrop() {
         var position = m_grabbedBall.transform.position;
-        if (m_gridPositionProvider.IsPivotInRangeExist(position)) {
-            var newCoordinates = GetCoordinatesByPosition(position);
-
-            // TODO build move in a better way and use color in the move data
-            var previousCoordinates = m_grabbedBall.GetComponent<CoordinatesOnGridScript>();
-            var move = new MoveData();
-            move.startCoordinate = previousCoordinates.GetBoardCoordinates();
-            move.endCoordinate = new BoardCoordinate(true, newCoordinates);
+        if (IsBallPutOnGrid(position)) {
+            var move = CreateMove(position);
 
             if (move.IsChangingLocation()) {
-                m_winDetector.DoMove(move, m_colorToMove);
-                if (m_winDetector.IsWinDetected(m_colorToMove)) {
-                    m_isGameOver = true;
-                    if (OnGameOver != null) {
-                        OnGameOver();
-                    }
-                }
-                m_grabbedBall.GetComponent<CoordinatesOnGridScript>().SetGridCoordinates(newCoordinates);
-                m_colorToMove = m_colorToMove == BoardCellColor.Blue ? BoardCellColor.White : BoardCellColor.Blue;
+                MoveBall(move);
+                SwitchPlayer();
             }
         }
 
         UngrabBall();
     }
 
+    private MoveData CreateMove(Vector3 position) {
+        GridCoordinate newCoordinates = GetCoordinatesByPosition(position);
+        var previousCoordinates = m_grabbedBall.GetComponent<CoordinatesOnGridScript>().GetBoardCoordinates();;
+        var endCoordinate = new BoardCoordinate(true, newCoordinates);
+        
+        var move = new MoveData(m_colorToMove, previousCoordinates, endCoordinate);
+        return move;
+    }
+
+    private bool IsBallPutOnGrid(Vector3 position) {
+        return m_gridPositionProvider.IsPivotInRangeExist(position);
+    }
+
+    private void MoveBall(MoveData move) {
+        m_winDetector.DoMove(move);
+        if (m_winDetector.IsWinDetected(m_colorToMove)) {
+            m_isGameOver = true;
+            if (OnGameOver != null) {
+                OnGameOver();
+            }
+        }
+
+        var finalGridCoordinates = move.m_endCoordinate.m_gridCoordinate;
+        m_grabbedBall.GetComponent<CoordinatesOnGridScript>().SetGridCoordinates(finalGridCoordinates);
+    }
+
+    private void SwitchPlayer() {
+        m_colorToMove = m_colorToMove == BoardCellColor.Blue ? BoardCellColor.White : BoardCellColor.Blue;
+    }
+    
     private GridCoordinate GetCoordinatesByPosition(Vector3 position) {
         var combinedPosition = m_gridPositionProvider.GetCombinedPosition(position);
         var gridCoordinates = combinedPosition.GetGridCoordinates();
